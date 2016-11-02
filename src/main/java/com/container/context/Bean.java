@@ -1,6 +1,5 @@
 package com.container.context;
 
-import com.container.W1nter;
 import com.container.context.exceptions.BeanCreationException;
 import com.container.context.exceptions.DeniedBeanCreationException;
 
@@ -15,6 +14,10 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <p>Bean instances are used to contain information about classes, marked as snowflakes.</p>
+ * <p>The are responsible for snowflake instantiation and reporting.</p>
+ */
 public class Bean {
     private boolean copied;
     private boolean denied;
@@ -23,6 +26,13 @@ public class Bean {
     private final Class<?> beanClass;
     private Object beanInstance;
 
+
+    /**
+     * Constructs bean instance with specified snowflake name and class, that was marked with that annotation.
+     * @param snowFlakeName name specified in the value of Snowflake annotation <b>Snowflake(snowflakeName = "Mindy")</b>.
+     *                      Cannot be null.
+     * @param beanClass class marked with Snowflake annotation. Cannot be null.
+     */
     public Bean(String snowFlakeName, Class<?> beanClass) {
         if (snowFlakeName == null)
             throw new NullPointerException("Snowflake name is null!");
@@ -32,10 +42,18 @@ public class Bean {
         this.beanClass = beanClass;
     }
 
+    /**
+     *
+     * @return Returns true if class is not a singleton.
+     */
     public boolean isCopied() {
         return copied;
     }
 
+    /**
+     * Sets the
+     * @param copied
+     */
     public void setCopied(boolean copied) {
         this.copied = copied;
     }
