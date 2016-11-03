@@ -8,7 +8,12 @@ import com.container.context.exceptions.BeanCreationException;
 import com.container.context.exceptions.DeniedBeanCreationException;
 import com.container.context.exceptions.SnowflakeDoesNotExistException;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Map;
+
 
 /**
  * W1nter class is a primitive IoC/DI container that can create classes marked with Snowflake annotation.
@@ -27,8 +32,18 @@ import java.util.*;
  * </pre>
  */
 public class W1nter {
+    /**
+     * The value is used to store all the paths that were added to W1nter container.
+     */
     private HashSet<String> setOfPaths = new HashSet<String>();
-    private HashMap<String,Bean> createdBeans = new HashMap<String,Bean>();
+    /**
+     * The value is used to store snowflake names and corresponding bean instances.
+     * (Bean instances are not the instances of class marked with @Snowflake.
+     * Bean instances are used to store information about snowflakes
+     * and are responsible for creation of instances of classes
+     * marked as snowflakes.)
+     */
+    private HashMap<String, Bean> createdBeans = new HashMap<String, Bean>();
 
     /**
      * Default constructor.
@@ -42,8 +57,9 @@ public class W1nter {
      * @throws BeanCreationException will be thrown if constructor cannot instantiate "snowflake" classes.
      */
     public W1nter(String packagePath) throws BeanCreationException {
-        if (packagePath == null )
+        if (packagePath == null) {
             throw new NullPointerException("Package path is null!");
+        }
         this.setOfPaths.add(packagePath);
         instantiateBeans(packagePath);
     }
@@ -68,8 +84,9 @@ public class W1nter {
      * @throws BeanCreationException will be thrown if W1nter container cannot instantiate beans.
      */
     public void addSnowflakes(String packagePath) throws BeanCreationException {
-        if (packagePath == null)
+        if (packagePath == null) {
             throw new NullPointerException("Package path is null!");
+        }
         this.setOfPaths.add(packagePath);
         instantiateBeans(packagePath);
     }
@@ -87,11 +104,14 @@ public class W1nter {
      * @throws DeniedBeanCreationException wil be thrown if class is marked with @Denied annotation.
      * @throws BeanCreationException will be thrown if container cannot instantiate beans.
      */
-    public Object getSnowflake(String snowflakeName) throws SnowflakeDoesNotExistException, DeniedBeanCreationException, BeanCreationException {
-        if (snowflakeName == null)
+    public Object getSnowflake(String snowflakeName) throws SnowflakeDoesNotExistException,
+                                                    DeniedBeanCreationException, BeanCreationException {
+        if (snowflakeName == null) {
             throw new BeanCreationException();
-        if (!createdBeans.containsKey(snowflakeName))
+        }
+        if (!createdBeans.containsKey(snowflakeName)) {
             throw new SnowflakeDoesNotExistException("W1nter does not contain snowflake with name: " + snowflakeName);
+        }
         return createdBeans.get(snowflakeName).createSnowflake();
     }
 

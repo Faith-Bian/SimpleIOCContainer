@@ -26,25 +26,46 @@ import java.util.List;
  * <p>The are responsible for snowflake instantiation and reporting.</p>
  */
 public class Bean {
+    /**
+     * The value indicates whether the class was marked with @Copied annotation.
+     */
     private boolean copied;
+    /**
+     * The value indicates whether the class was marked with @Denied annotation.
+     */
     private boolean denied;
+    /**
+     * The value stores the path that was mentioned in @Report annotation.
+     */
     private String report;
+    /**
+     * The value stores the name that was mentioned in @Snowflake annotation.
+     */
     private final String snowFlakeName;
+    /**
+     * The value stores the class that was marked as snowflake.
+     */
     private final Class<?> beanClass;
+    /**
+     * The value stores the instance of the class marked with snowflake annotation.
+     */
     private Object beanInstance;
 
 
     /**
      * Constructs bean instance with specified snowflake name and class, that was marked with that annotation.
-     * @param snowFlakeName name specified in the value of Snowflake annotation <b>@l Snowflake(snowflakeName = "Mindy")</b>.
+     * @param snowFlakeName name specified in the value of Snowflake annotation
+     *                      <b>@l Snowflake(snowflakeName = "Mindy")</b>.
      *                      Cannot be null.
      * @param beanClass class marked with Snowflake annotation. Cannot be null.
      */
-    Bean(String snowFlakeName, Class<?> beanClass) {
-        if (snowFlakeName == null)
+    public Bean(String snowFlakeName, Class<?> beanClass) {
+        if (snowFlakeName == null) {
             throw new NullPointerException("Snowflake name is null!");
-        if (beanClass == null)
+        }
+        if (beanClass == null) {
             throw new NullPointerException("Bean class is null!");
+        }
         this.snowFlakeName = snowFlakeName;
         this.beanClass = beanClass;
     }
@@ -53,14 +74,14 @@ public class Bean {
      *
      * @return Returns true if class is not a singleton.
      */
-    boolean isCopied() {
+    public boolean isCopied() {
         return copied;
     }
 
     /**
      * @param copied Sets the copied value, if true - multiple instances of the object may be created inside container.
      */
-    void setCopied(boolean copied) {
+    public void setCopied(boolean copied) {
         this.copied = copied;
     }
 
@@ -74,7 +95,7 @@ public class Bean {
     /**
      * @param denied Sets the denied value. If true - object creation inside container will throw BeanCreationException
      */
-    void setDenied(boolean denied) {
+    public void setDenied(boolean denied) {
         this.denied = denied;
     }
 
@@ -90,9 +111,10 @@ public class Bean {
      * @param report String representing a path to the report file.
      *               Empty stings or null references will not set the report value.
      */
-    void setReport(String report) {
-        if (report != null && !report.isEmpty())
-        this.report = report;
+    public void setReport(String report) {
+        if (report != null && !report.isEmpty()) {
+            this.report = report;
+        }
     }
 
     /**
@@ -102,25 +124,27 @@ public class Bean {
      * @throws DeniedBeanCreationException will be thrown if bean is marked as denied.
      * @throws BeanCreationException will be thrown if new instance of class cannot be created.
      */
-    Object createSnowflake() throws DeniedBeanCreationException, BeanCreationException {
-        if (this.denied) throw new DeniedBeanCreationException();
+    public Object createSnowflake() throws DeniedBeanCreationException, BeanCreationException {
+        if (this.denied) {
+            throw new DeniedBeanCreationException();
+        }
         try {
             if (this.copied || beanInstance == null) {
                     beanInstance = beanClass.newInstance();
             }
-        }
-        catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new BeanCreationException(e);
         }
-        if (this.report != null && !this.report.isEmpty())
+        if (this.report != null && !this.report.isEmpty()) {
             reportSnowflake();
+        }
         return beanInstance;
     }
 
     /**
      * Generates a report. And writes it to the specified path.
      */
-    private void reportSnowflake(){
+    private void reportSnowflake() {
         PrintWriter out = null;
         try {
             out = new PrintWriter(new BufferedWriter(new FileWriter(this.report)));
@@ -132,8 +156,9 @@ public class Bean {
         TypeVariable[] tv = beanClass.getTypeParameters();
         if (tv.length != 0) {
             out.format("  ");
-            for (TypeVariable t : tv)
+            for (TypeVariable t : tv) {
                 out.format("%s ", t.getName());
+            }
             out.format("%n%n");
         } else {
             out.format("  -- No Type Parameters --%n%n");
@@ -142,8 +167,9 @@ public class Bean {
         out.format("Implemented Interfaces:%n");
         Type[] intfs = beanClass.getGenericInterfaces();
         if (intfs.length != 0) {
-            for (Type intf : intfs)
+            for (Type intf : intfs) {
                 out.format("  %s%n", intf.toString());
+            }
             out.format("%n");
         } else {
             out.format("  -- No Implemented Interfaces --%n%n");
@@ -153,8 +179,9 @@ public class Bean {
         List<Class> l = new ArrayList<Class>();
         printAncestor(beanClass, l);
         if (l.size() != 0) {
-            for (Class<?> cl : l)
+            for (Class<?> cl : l) {
                 out.format("  %s%n", cl.getCanonicalName());
+            }
             out.format("%n");
         } else {
             out.format("  -- No Super Classes --%n%n");
@@ -163,18 +190,19 @@ public class Bean {
         out.format("Annotations:%n");
         Annotation[] ann = beanClass.getAnnotations();
         if (ann.length != 0) {
-            for (Annotation a : ann)
+            for (Annotation a : ann) {
                 out.format("  %s%n", a.toString());
+            }
             out.format("%n");
         } else {
             out.format("  -- No Annotations --%n%n");
         }
         } catch (IOException e) {
             System.out.println(e);
-        }
-        finally {
-            if (out != null)
+        } finally {
+            if (out != null) {
                 out.close();
+            }
         }
     }
 

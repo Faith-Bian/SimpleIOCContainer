@@ -15,5 +15,9 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.TYPE)
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface Report {
+    /**
+     * The value defines the path to the file of report.
+     * @return path.
+     */
     String destinationFile() default "";
 }

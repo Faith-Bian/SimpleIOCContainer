@@ -14,5 +14,9 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.TYPE)
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface Snowflake {
+    /**
+     * Value used to store snowflake name.
+     * @return snowflake name.
+     */
     String snowflakeName() default "";
 }
