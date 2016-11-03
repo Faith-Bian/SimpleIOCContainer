@@ -1,3 +1,9 @@
+/**
+ * <p>
+ * The package contains classes that are used
+ * to represent the context of W1nter container.
+ * </p>
+ */
 package com.container.context;
 
 import com.container.context.exceptions.BeanCreationException;
@@ -15,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>Bean instances are used to contain information about classes, marked as snowflakes.</p>
+ * <p>Bean instances are used to contain information about classes,
+ * marked as snowflakes.</p>
  * <p>The are responsible for snowflake instantiation and reporting.</p>
  */
 public class Bean {
@@ -29,11 +36,11 @@ public class Bean {
 
     /**
      * Constructs bean instance with specified snowflake name and class, that was marked with that annotation.
-     * @param snowFlakeName name specified in the value of Snowflake annotation <b>Snowflake(snowflakeName = "Mindy")</b>.
+     * @param snowFlakeName name specified in the value of Snowflake annotation <b>@l Snowflake(snowflakeName = "Mindy")</b>.
      *                      Cannot be null.
      * @param beanClass class marked with Snowflake annotation. Cannot be null.
      */
-    public Bean(String snowFlakeName, Class<?> beanClass) {
+    Bean(String snowFlakeName, Class<?> beanClass) {
         if (snowFlakeName == null)
             throw new NullPointerException("Snowflake name is null!");
         if (beanClass == null)
@@ -46,36 +53,56 @@ public class Bean {
      *
      * @return Returns true if class is not a singleton.
      */
-    public boolean isCopied() {
+    boolean isCopied() {
         return copied;
     }
 
     /**
-     * Sets the
-     * @param copied
+     * @param copied Sets the copied value, if true - multiple instances of the object may be created inside container.
      */
-    public void setCopied(boolean copied) {
+    void setCopied(boolean copied) {
         this.copied = copied;
     }
 
-    public boolean isDenied() {
+    /**
+     * @return Return true if object creation inside container is prohibited.
+     */
+    boolean isDenied() {
         return denied;
     }
 
-    public void setDenied(boolean denied) {
+    /**
+     * @param denied Sets the denied value. If true - object creation inside container will throw BeanCreationException
+     */
+    void setDenied(boolean denied) {
         this.denied = denied;
     }
 
-    public String getReport() {
+    /**
+     *
+     * @return Returns a string representing a path to the report file.
+     */
+    String getReport() {
         return report;
     }
 
-    public void setReport(String report) {
-        if (report!=null && !report.isEmpty())
+    /**
+     * @param report String representing a path to the report file.
+     *               Empty stings or null references will not set the report value.
+     */
+    void setReport(String report) {
+        if (report != null && !report.isEmpty())
         this.report = report;
     }
 
-    public Object createSnowflake() throws DeniedBeanCreationException, BeanCreationException {
+    /**
+     * The method is responsible for bean creation inside container. For copied objects after each call
+     * a new instance of af a class will be created. If a report path was specified, a report will be generated.
+     * @return Returns an instance of an object that was marked with snowflake annotation.
+     * @throws DeniedBeanCreationException will be thrown if bean is marked as denied.
+     * @throws BeanCreationException will be thrown if new instance of class cannot be created.
+     */
+    Object createSnowflake() throws DeniedBeanCreationException, BeanCreationException {
         if (this.denied) throw new DeniedBeanCreationException();
         try {
             if (this.copied || beanInstance == null) {
@@ -85,12 +112,14 @@ public class Bean {
         catch (InstantiationException | IllegalAccessException e) {
             throw new BeanCreationException(e);
         }
-        System.err.format("Snowflake %s of class: %s was created!%n", snowFlakeName,beanClass.getCanonicalName());
         if (this.report != null && !this.report.isEmpty())
             reportSnowflake();
         return beanInstance;
     }
 
+    /**
+     * Generates a report. And writes it to the specified path.
+     */
     private void reportSnowflake(){
         PrintWriter out = null;
         try {
@@ -144,11 +173,16 @@ public class Bean {
             System.out.println(e);
         }
         finally {
-            if (out!=null)
+            if (out != null)
                 out.close();
         }
     }
 
+    /**
+     * Recursively prints the parent classes of the class specified as input parameter.
+     * @param c Represents the class, which superclasses should be printed.
+     * @param l An empty list serves for recursive calls to the method.
+     */
     private  void printAncestor(Class<?> c, List<Class> l) {
         Class<?> ancestor = c.getSuperclass();
         if (ancestor != null) {
