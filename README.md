@@ -1,2 +1,2 @@
 # SimpleIOCContainer
-IOC container that gives an opportuniy to instantiate beans 
+W1nter is a primitive IoC container. 
